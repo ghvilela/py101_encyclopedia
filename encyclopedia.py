@@ -152,15 +152,19 @@ for round in range(1,rounds+1):
         if not random_answer in answer_pool:
             answer_pool.append(random_answer)
     print("Now choose an answer from the pool:")
+    option = 0
     for answer in answer_pool:
-        option = 1
-        print("{opt}) {answer}".format(opt=option, answer=answer))
         option += 1
+        print("{opt}) {answer}".format(opt=option, answer=answer))
+    ## Choose answer
+
+    ## Score points depending on answer    
 
 
 
-
-print(player_scores)
+for key in player_scores:
+    scoreboard = "{player} score is...{points} points!".format(player=key, points=player_scores[key])
+    print(scoreboard)
 
 
         
