@@ -122,6 +122,7 @@ rounds = int(game_length())
 start_message = "TIME TO PLAY!"
 print(render(start_message))
 
+## Game Round Iteration
 for round in range(1,rounds+1):
     ##4.1 Question asking
     unavailable_questions = []
@@ -139,10 +140,12 @@ for round in range(1,rounds+1):
     ##4.2 display player input options and build pool
     answer_pool = []
     answer_pool.append(correct_answer.upper())
+    players_answers = {}
     for player in players_list:
         player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
         while player_answer == "":
             player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
+        players_answers[player]= player_answer
         if not player_answer.upper() in answer_pool:
             answer_pool.append(player_answer.upper())
         else:
@@ -152,18 +155,51 @@ for round in range(1,rounds+1):
         if not random_answer in answer_pool:
             answer_pool.append(random_answer)
     print("Now choose an answer from the pool:")
+    pool_display = {}
     option = 0
     for answer in answer_pool:
         option += 1
+        pool_display[str(option)] = answer
         print("{opt}) {answer}".format(opt=option, answer=answer))
-    ## Choose answer
+    ## Choose answer and score points
+    correct_choice = ""
+    for opt, answer in pool_display.items():
+        if answer == correct_answer:
+            correct_choice = opt
+    for player in players_list:
+        player_choice = input("{player}: ".format(player=player))
+        while not player_choice in pool_display.keys():
+            player_choice = input("{player}: ".format(player=player))
+        if player_choice == correct_choice:
+            player_scores[player] += 5
+        for player, answer in players_answers.items():
+            if pool_display[player_choice] == answer:
+                player_scores[player] += 2
+    
+    ## Print current scoreboard
+    for key in player_scores:
+        scoreboard = "{player}, your current score is: {points} points!".format(player=key, points=player_scores[key])
+        print(scoreboard)
 
-    ## Score points depending on answer    
 
+## Winner
 
+winner = ""
+max_score = 0
+for player, score in player_scores.items():
+    if score > max_score:
+        max_score = score
+        winner = player
+    elif score == max_score:
+        winner = winner + " and " + player
 
+## Final Board
+print("and the winner is.........")
+print(render(winner))
+print(render("Score: " + max_score))
+print("Final Score:")
 for key in player_scores:
-    scoreboard = "{player} score is...{points} points!".format(player=key, points=player_scores[key])
+    scoreboard = "{player}, your final score is:{points} points!".format(player=key, points=player_scores[key])
     print(scoreboard)
 
 
