@@ -1,6 +1,12 @@
 import random
 from cfonts import render
 
+def create_num_list(n1,n2):
+    num_list = []
+    for i in range(n1,n2+1):
+        num_list.append(str(i))
+    return num_list
+
 class Questions():
     pass
 
@@ -9,8 +15,8 @@ class Answers():
 
 ## Questions and Answers dictionary
 
-easy_mode = {"test1"}
-hard_mode = {"test2"}
+easy_mode = {"test1":"Bla1"}
+hard_mode = {"test2":"Ble2"}
 
 ## title screen
 
@@ -38,7 +44,7 @@ print(title_message)
 def number_of_players():
     players = input("Please insert the number of players [2-8]")
     while True:
-        if players in ["2", "3", "4", "5", "6", "7", "8"]:
+        if players in create_num_list(2,8):
             break
         players = input("Please insert the number of players [2-8]")
     return players
@@ -48,11 +54,16 @@ num_players = int(number_of_players())
 
 def define_names():
     user_names = []
-    for i in range(int(num_players)):
-        user_names.append(input("choose a name, Player {i}: ".format(i=i+1)))
+    i = 1
+    while len(user_names) < num_players:
+        player = input("choose a name, Player {i}: ".format(i=i))
+        if not player == "":
+            user_names.append(player)
+            i += 1
+        continue
     return user_names    
 
-define_names()
+players_list = define_names()
 
 ##3 set difficulty level
 def set_difficulty():
@@ -65,6 +76,8 @@ def set_difficulty():
     while True:
         if difficulty_input.upper() in ("R", "B"):
             break
+        elif difficulty_input == "":
+            difficulty_input = "R"
         else:
             print("not a valid choice...")
             difficulty_input = input("""
@@ -79,10 +92,46 @@ def set_difficulty():
     return difficulty
 
 question_list = set_difficulty()
-# print(question_list)
+questions = list(question_list.keys())
+answers = list(question_list.values())
 
+##3.5 select game length
+
+def game_length():
+    num_rounds = input("How many rounds do you want to play? [2-10]")
+    while True:
+        if num_rounds in create_num_list(2,10):
+            break
+        elif num_rounds == "":
+            num_rounds = "5"
+            break
+        num_rounds = input("How many rounds do you want to play? [2-10]")
+    return num_rounds
+
+rounds = int(game_length())
 
 ##4 display question and players inputs
+start_message = "TIME TO PLAY!"
+print(render(start_message))
+
+for round in range(1,rounds+1):
+    unavailable_questions = []
+    round_question = questions[random.randint(0,len(questions)-1)]
+    while round_question in unavailable_questions:
+        round_question = questions[random.randint(0,len(questions)-1)]
+    unavailable_questions.append(round_question)
+    round_message = """
+    Question {n}:
+    {q}""".format(n=round, q=round_question)
+    print(round_message)
+    answer_pool = []
+    for player in players_list:
+        player_answer = input("Enter your answer, {p}: ".format(p=player))
+        while player_answer == "":
+            player_answer = input("Enter your answer, {p}: ".format(p=player))
+        answer_pool.append(player_answer.upper())
+        
+
 
 ##5 display pool and players inputs
 
