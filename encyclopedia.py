@@ -1,5 +1,6 @@
 import random
 from cfonts import render
+import getpass
 
 def create_num_list(n1,n2):
     num_list = []
@@ -15,8 +16,8 @@ class Answers():
 
 ## Questions and Answers dictionary
 
-easy_mode = {"test1":"Bla1"}
-hard_mode = {"test2":"Ble2"}
+easy_mode = {"test1":("Bla1", "apa", "rand", "kgald", "test", "gjkkd")}
+hard_mode = {"test2":("Ble2", "GG")}
 
 ## title screen
 
@@ -46,6 +47,9 @@ def number_of_players():
     while True:
         if players in create_num_list(2,8):
             break
+        elif players == "":
+            players = "2"
+            break
         players = input("Please insert the number of players [2-8]")
     return players
 
@@ -60,10 +64,14 @@ def define_names():
         if not player == "":
             user_names.append(player)
             i += 1
-        continue
+        else:
+            player = "Player {n}".format(n=i)
+            user_names.append(player)
+            i += 1
     return user_names    
 
 players_list = define_names()
+player_scores = {key:0 for key in players_list}
 
 ##3 set difficulty level
 def set_difficulty():
@@ -95,7 +103,7 @@ question_list = set_difficulty()
 questions = list(question_list.keys())
 answers = list(question_list.values())
 
-##3.5 select game length
+##3.1 select game length
 
 def game_length():
     num_rounds = input("How many rounds do you want to play? [2-10]")
@@ -115,8 +123,11 @@ start_message = "TIME TO PLAY!"
 print(render(start_message))
 
 for round in range(1,rounds+1):
+    ##4.1 Question asking
     unavailable_questions = []
     round_question = questions[random.randint(0,len(questions)-1)]
+    round_answers = question_list[round_question]
+    correct_answer = question_list[round_question][0]
     while round_question in unavailable_questions:
         round_question = questions[random.randint(0,len(questions)-1)]
     unavailable_questions.append(round_question)
@@ -124,16 +135,35 @@ for round in range(1,rounds+1):
     Question {n}:
     {q}""".format(n=round, q=round_question)
     print(round_message)
+    
+    ##4.2 display player input options and build pool
     answer_pool = []
+    answer_pool.append(correct_answer.upper())
     for player in players_list:
-        player_answer = input("Enter your answer, {p}: ".format(p=player))
+        player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
         while player_answer == "":
-            player_answer = input("Enter your answer, {p}: ".format(p=player))
-        answer_pool.append(player_answer.upper())
+            player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
+        if not player_answer.upper() in answer_pool:
+            answer_pool.append(player_answer.upper())
+        else:
+            player_scores[player] += 10
+    while len(answer_pool) < 5:
+        random_answer = round_answers[random.randint(1,len(round_answers)-1)]
+        if not random_answer in answer_pool:
+            answer_pool.append(random_answer)
+    print("Now choose an answer from the pool:")
+    for answer in answer_pool:
+        option = 1
+        print("{opt}) {answer}".format(opt=option, answer=answer))
+        option += 1
+
+
+
+
+print(player_scores)
+
+
         
-
-
-##5 display pool and players inputs
 
 ##6 display correct answer and round scores
 
