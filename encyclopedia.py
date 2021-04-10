@@ -8,16 +8,10 @@ def create_num_list(n1,n2):
         num_list.append(str(i))
     return num_list
 
-class Questions():
-    pass
-
-class Answers():
-    pass    
-
 ## Questions and Answers dictionary
 
-easy_mode = {"test1":("Bla1", "apa", "rand", "kgald", "test", "gjkkd")}
-hard_mode = {"test2":("Ble2", "GG")}
+easy_mode = {}
+hard_mode = {}
 
 ## title screen
 
@@ -125,13 +119,9 @@ print(render(start_message))
 ## Game Round Iteration
 for round in range(1,rounds+1):
     ##4.1 Question asking
-    unavailable_questions = []
-    round_question = questions[random.randint(0,len(questions)-1)]
+    round_question = questions.pop(random.randint(0,len(questions)-1))
     round_answers = question_list[round_question]
     correct_answer = question_list[round_question][0]
-    while round_question in unavailable_questions:
-        round_question = questions[random.randint(0,len(questions)-1)]
-    unavailable_questions.append(round_question)
     round_message = """
     Question {n}:
     {q}""".format(n=round, q=round_question)
@@ -145,7 +135,7 @@ for round in range(1,rounds+1):
         player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
         while player_answer == "":
             player_answer = getpass.getpass("Enter your answer, {p}: ".format(p=player))
-        players_answers[player]= player_answer
+        players_answers[player]= player_answer.upper()
         if not player_answer.upper() in answer_pool:
             answer_pool.append(player_answer.upper())
         else:
@@ -153,11 +143,11 @@ for round in range(1,rounds+1):
     while len(answer_pool) < 5:
         random_answer = round_answers[random.randint(1,len(round_answers)-1)]
         if not random_answer in answer_pool:
-            answer_pool.append(random_answer)
+            answer_pool.append(random_answer.upper())
     print("Now choose an answer from the pool:")
     pool_display = {}
     option = 0
-    for answer in answer_pool:
+    for answer in random.sample(answer_pool, len(answer_pool)):
         option += 1
         pool_display[str(option)] = answer
         print("{opt}) {answer}".format(opt=option, answer=answer))
@@ -196,20 +186,8 @@ for player, score in player_scores.items():
 ## Final Board
 print("and the winner is.........")
 print(render(winner))
-print(render("Score: " + max_score))
+print(render("Score: " + str(max_score)))
 print("Final Score:")
 for key in player_scores:
     scoreboard = "{player}, your final score is:{points} points!".format(player=key, points=player_scores[key])
     print(scoreboard)
-
-
-        
-
-##6 display correct answer and round scores
-
-##7 display round count
-
-## return to 4
-
-## display final screen with scores and winner! 
-
