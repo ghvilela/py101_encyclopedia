@@ -9,6 +9,11 @@ def create_num_list(n1,n2):
         num_list.append(str(i))
     return num_list
 
+def get_key(dict, val):
+    for key, value in dict.items():
+         if val == value:
+             return key
+
 ## Questions and Answers dictionary
 
 easy_mode = {}
@@ -156,16 +161,18 @@ for item in hard_list_raw:
 title = "ENCYCLOPEDIA"
 title_message = """
 Welcome to ENCYCLOPEDIA, an interactive Q&A game to play with friends!
+
 Here are some rules to play:
-1. Each round consists in the following parts:
-a) I pose players a question;
-b) Each player then provide an answer in secret;
-c) You get a poll containing all your answers and the correct answer (I may throw some randos in there);
-d) Each player will select an answer from the poll;
-2. After this, I'll show you the right answer and you'll get some points, as follows:
-a) 10 points if your personal answer matches the right one;
-b) 5 points if you choose right in the pool;
-c) 2 points for each time another player chooses your answer from the pool;
+In each round you will be given an famous person's or character's name;
+You will then have to come up with a makeshift QUOTE from this person or character;
+Each player will provide their own answer in secret;
+Then, you all get a poll containing your QUOTEs and one true QUOTE and each player will try to guess the correct one;
+
+Here is how points will work:
+a) You get 20 points if your personal QUOTE matches the one in store word by word;
+b) 7 points if you choose right in the pool;
+c) 5 points for each time another player chooses your QUOTE from the pool;
+
 The winner is the player with most points in the end!
 Feeling Lucky?!
 """
@@ -261,7 +268,7 @@ for round in range(1,rounds+1):
     correct_answer = question_list[str(round_question)]
     round_message = """
     Question {n}:
-    Come up a nice "{q}" quote: """.format(n=round, q=round_question.upper())
+    Come up with a nice "{q}" quote: """.format(n=round, q=round_question.upper())
     print(round_message)
     
     ##4.2 display player input options and build pool
@@ -276,7 +283,7 @@ for round in range(1,rounds+1):
         if not player_answer.upper() in answer_pool:
             answer_pool.append(player_answer.upper())
         else:
-            player_scores[player] += 10
+            player_scores[player] += 20
     while len(answer_pool) < 5:
         random_answer = random_quotes[random.randint(1,len(random_quotes)-1)]
         if not random_answer.upper() in answer_pool:
@@ -298,10 +305,13 @@ for round in range(1,rounds+1):
         while not player_choice in pool_display.keys():
             player_choice = input("{player}: ".format(player=player))
         if player_choice == correct_choice:
-            player_scores[player] += 5
+            player_scores[player] += 7
         for player, answer in players_answers.items():
             if pool_display[player_choice] == answer:
-                player_scores[player] += 2
+                player_scores[player] += 5
+        if player_choice == str(get_key(pool_display, players_answers[player])):
+            player_scores[player] -= 5
+    print ("""{author} did say "{right}"!!! At least so I was told...""".format(author = round_question, right = correct_answer))
     
     ## Print current scoreboard
     for key in player_scores:
